@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Base layer.
+ *
+ * The console is dark by default rather than by preference toggle: it is an
+ * operations surface that people leave open, and the semantic colours (pass /
+ * escalate / block) were picked for contrast against a dark ground. Offering a light
+ * theme that had not been checked for those contrast ratios would be worse than not
+ * offering one.
+ */
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    @apply bg-ink-900 text-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply text-sm;
+  }
+
+  /* Amounts and identifiers are compared column-to-column, so their digits have to
+   * line up. Tabular figures everywhere a number is meant to be read as a quantity. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply text-body;
+  }
+
+  a {
+    @apply text-accent-text;
+  }
+
+  a:hover {
+    @apply text-accent;
+  }
+
+  /* Focus is visible on every interactive element. An approval queue navigated by
+   * keyboard must never leave the reader guessing which row is about to be actioned. */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-accent/70 ring-offset-2 ring-offset-ink-900;
+  }
+
+  ::selection {
+    @apply bg-accent/30 text-body;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-ink-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-ink-500;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-line-strong;
+  }
+
+  /* Number inputs in the policy form: the spinner steals horizontal space and
+   * invites click-dragging a monetary ceiling. */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-card border border-line bg-ink-800 shadow-card;
+  }
+
+  .card-pad {
+    @apply p-4 sm:p-5;
+  }
+
+  .label {
+    @apply text-2xs font-medium uppercase tracking-[0.14em] text-dim;
+  }
+
+  .field {
+    @apply w-full rounded-lg border border-line bg-ink-700 px-3 py-2 text-sm text-body
+      placeholder:text-dim focus:border-accent/60;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm
+      font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply border-accent/40 bg-accent/15 text-accent-text hover:enabled:bg-accent/25;
+  }
+
+  .btn-ghost {
+    @apply border-line bg-transparent text-muted hover:enabled:border-line-strong hover:enabled:text-body;
+  }
+
+  .btn-approve {
+    @apply border-pass/40 bg-pass-soft text-pass hover:enabled:bg-pass/20;
+  }
+
+  .btn-reject {
+    @apply border-block/40 bg-block-soft text-block hover:enabled:bg-block/20;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-2xs font-medium;
+  }
+
+  .table-head {
+    @apply border-b border-line text-left text-2xs font-medium uppercase tracking-[0.12em] text-dim;
+  }
+
+  .row-hover {
+    @apply transition-colors hover:bg-ink-700/60;
+  }
+
+  /* Loading placeholder. Shaped like the content it replaces, so the layout does not
+   * jump when real data lands. A quiet opacity pulse rather than a sweeping gradient:
+   * several of these on screen at once should read as "not yet", not as motion. */
+  .skeleton {
+    @apply animate-shimmer rounded bg-ink-600;
+  }
+}
