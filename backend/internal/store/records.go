@@ -143,7 +143,7 @@ func (s *Store) UpsertTransaction(ctx context.Context, t *domain.Transaction) er
 			                          currency, status, method, failure_reason, error_code, attempt_count,
 			                          environment, created_at)
 			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'test',$12)
-			ON CONFLICT (razorpay_payment_id) DO UPDATE SET
+			ON CONFLICT (razorpay_payment_id) WHERE razorpay_payment_id IS NOT NULL DO UPDATE SET
 				status = EXCLUDED.status,
 				method = COALESCE(NULLIF(EXCLUDED.method,''), transactions.method),
 				failure_reason = COALESCE(NULLIF(EXCLUDED.failure_reason,''), transactions.failure_reason),

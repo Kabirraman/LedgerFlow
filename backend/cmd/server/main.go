@@ -26,6 +26,13 @@ import (
 	"syscall"
 	"time"
 
+	// Loads backend/.env into the process environment before config.Load() runs,
+	// if the file exists. A real OS environment variable always wins over a
+	// value from .env — this only fills in what isn't already set, which is
+	// what lets a deployment (Docker, systemd, a CI runner) override it with
+	// real environment injection without editing or deleting the file.
+	_ "github.com/joho/godotenv/autoload"
+
 	"github.com/ledgerflow/ledgerflow/internal/agents"
 	"github.com/ledgerflow/ledgerflow/internal/auth"
 	"github.com/ledgerflow/ledgerflow/internal/config"

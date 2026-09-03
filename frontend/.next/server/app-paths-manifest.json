@@ -1,0 +1,7 @@
+{
+  "/api/session/route": "app/api/session/route.js",
+  "/api/proxy/[...path]/route": "app/api/proxy/[...path]/route.js",
+  "/login/page": "app/login/page.js",
+  "/(app)/dashboard/page": "app/(app)/dashboard/page.js",
+  "/(app)/policies/page": "app/(app)/policies/page.js"
+}

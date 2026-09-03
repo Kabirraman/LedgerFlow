@@ -27,9 +27,20 @@
  * the better trade for a prototype than a nonce scheme that is not verified end
  * to end.
  */
+/**
+ * 'unsafe-eval' is added ONLY in development. Next's dev-mode React Refresh
+ * (hot module reload) runtime evaluates code via eval() to patch modules in
+ * place without a full reload — with a production-strength CSP in place, that
+ * eval() throws and the entire client bundle fails to execute before it ever
+ * mounts, which looks like "nothing happens" on every button in the app rather
+ * than a visible error. The production build never hot-reloads, so the
+ * production CSP never needs this and stays exactly as strict as before.
+ */
+const isDev = process.env.NODE_ENV !== 'production';
+
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self' data:",
