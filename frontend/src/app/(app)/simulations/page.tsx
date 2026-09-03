@@ -298,8 +298,17 @@ function RunDetail({ response }: { response: SimulationResponse }) {
             <Metric label="Evidence coverage" value={formatPercent(agent_evaluation.evidence_coverage)} />
             <Metric
               label="Schema-valid rate"
-              value={formatPercent(agent_evaluation.schema_valid_rate)}
-              hint={`${formatCount(agent_evaluation.model_calls)} model calls.`}
+              // model_calls === 0 means no model was ever invoked (deterministic
+              // fallback only) — the backend leaves schema_valid_rate at its zero
+              // default in that case (evaluate.go only computes it when
+              // model_calls > 0), so showing "0.0%" here would misreport "the model
+              // always failed" when the true story is "no model ran".
+              value={agent_evaluation.model_calls > 0 ? formatPercent(agent_evaluation.schema_valid_rate) : 'N/A'}
+              hint={
+                agent_evaluation.model_calls > 0
+                  ? `${formatCount(agent_evaluation.model_calls)} model calls.`
+                  : 'No model calls were made — this run used the deterministic fallback only.'
+              }
             />
           </div>
           {agent_evaluation.unauthorized_actions > 0 ? (

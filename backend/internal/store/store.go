@@ -293,3 +293,46 @@ func derefTime(t *time.Time) time.Time {
 	}
 	return *t
 }
+
+// LockCase serializes all processing of one case across goroutines, using a
+// Postgres session-level advisory lock rather than the row-level FOR UPDATE
+// already inside UpdateCaseStatus.
+//
+// FOR UPDATE stops two concurrent writers from corrupting a case's status — it
+// does not stop them from both doing the work that leads up to that write. A
+// manual "Re-analyze" click and the background pipeline ticker can both pick up
+// the same case at once; without this lock, both independently call the
+// diagnosis and planning agents (real Gemini calls once one is configured,
+// doubling cost) and both log "diagnosis_completed" / "plan_completed" to the
+// audit trail, before the loser's status update is correctly rejected. That
+// looks like a bug on the case timeline even though no data was corrupted.
+//
+// pg_advisory_lock blocks the caller until the lock is free, so the second
+// caller waits for the first pass to finish rather than racing it — and by the
+// time it acquires the lock, the case has already moved on, so it does no
+// redundant work at all. The lock is session-scoped, which is why this holds a
+// single dedicated connection for the lock's lifetime rather than using the
+// pool: pg_advisory_unlock must run on the exact same connection that took the
+// lock, and pgxpool freely reassigns connections between calls.
+//
+// hashtext() folds the case's UUID string down to the int4 pg_advisory_lock
+// expects. A collision between two different case IDs would only make them
+// serialize with each other unnecessarily — never a correctness problem, just
+// a rare and harmless bit of extra waiting.
+func (s *Store) LockCase(ctx context.Context, caseID string) (release func(), err error) {
+	conn, err := s.pool.Acquire(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("acquire connection to lock case %s: %w", caseID, err)
+	}
+	if _, err := conn.Exec(ctx, `SELECT pg_advisory_lock(hashtext($1))`, caseID); err != nil {
+		conn.Release()
+		return nil, fmt.Errorf("lock case %s: %w", caseID, err)
+	}
+	return func() {
+		// Best-effort: if the connection or context is gone there is nothing
+		// meaningful to do, and the lock releases on its own when the session
+		// (this pooled connection) eventually closes.
+		_, _ = conn.Exec(context.Background(), `SELECT pg_advisory_unlock(hashtext($1))`, caseID)
+		conn.Release()
+	}, nil
+}

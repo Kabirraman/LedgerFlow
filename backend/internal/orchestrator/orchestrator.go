@@ -65,6 +65,12 @@ type Store interface {
 		riskScore float64, urgency domain.Urgency, reasonCodes, evidenceRefs []string) error
 	UpdateCaseExpectedRecovery(ctx context.Context, caseID string, expected domain.Money) error
 
+	// LockCase serializes concurrent processing of the same case (a manual
+	// Re-analyze racing the background ticker) so only one pass does real work
+	// per case at a time. See store.Store.LockCase for why FOR UPDATE alone
+	// does not already cover this.
+	LockCase(ctx context.Context, caseID string) (release func(), err error)
+
 	Audit(ctx context.Context, actor, entityType, entityID, caseID, eventType string, detail any) error
 	IncrCounter(ctx context.Context, name string) error
 }
@@ -262,6 +268,16 @@ func (o *Orchestrator) RunOnce(ctx context.Context) (Report, error) {
 // status and stops instead of executing against a decision that is no longer live.
 func (o *Orchestrator) AdvanceCase(ctx context.Context, caseID string) (Progress, error) {
 	prog := Progress{CaseID: caseID}
+
+	// Held for the whole pass: a case that is mid-pipeline here is not eligible
+	// work for whoever else asks for it, whether that is the next ticker firing
+	// or a person clicking Re-analyze. See store.Store.LockCase for why this is
+	// needed on top of the row lock inside UpdateCaseStatus.
+	release, err := o.store.LockCase(ctx, caseID)
+	if err != nil {
+		return prog, fmt.Errorf("lock case %s: %w", caseID, err)
+	}
+	defer release()
 
 	for i := 0; i < o.cfg.MaxStages; i++ {
 		c, err := o.store.GetCase(ctx, caseID)
@@ -470,7 +486,15 @@ func (o *Orchestrator) planStage(ctx context.Context, cc *caseContext, prog *Pro
 	// Short-circuiting the harmless ones would leave the case detail page with an
 	// empty control set exactly where a reviewer most wants to see that the rules
 	// ran (SRS 16.2).
-	return o.transition(ctx, cc, domain.StatusPolicyReview, "", prog)
+	//
+	// This transitions to PLANNED, not POLICY_REVIEW directly: the state machine
+	// (statemachine.go) only allows DIAGNOSED -> {PLANNED, ESCALATED, BLOCKED}, and
+	// PLANNED is what step() dispatches to policyStage on. Targeting POLICY_REVIEW
+	// here skips a state the machine requires, so every attempt is rejected as an
+	// invalid transition — the case never leaves DIAGNOSED, and the next tick reruns
+	// planning from scratch on the same case forever, appending "plan_completed" /
+	// "transition_skipped" pairs to its audit log indefinitely.
+	return o.transition(ctx, cc, domain.StatusPlanned, "", prog)
 }
 
 // diagnosisFrom rebuilds the planner's diagnosis input from the persisted record.

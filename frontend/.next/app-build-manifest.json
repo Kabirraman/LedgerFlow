@@ -6,15 +6,10 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/login/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/login/page.js"
-    ],
-    "/api/session/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/session/route.js"
+      "static/chunks/app/page.js"
     ],
     "/(app)/layout": [
       "static/chunks/webpack.js",
@@ -26,15 +21,30 @@
       "static/chunks/main-app.js",
       "static/chunks/app/(app)/dashboard/page.js"
     ],
+    "/api/session/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/session/route.js"
+    ],
     "/api/proxy/[...path]/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/proxy/[...path]/route.js"
     ],
-    "/(app)/policies/page": [
+    "/(app)/cases/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(app)/policies/page.js"
+      "static/chunks/app/(app)/cases/page.js"
+    ],
+    "/(app)/cases/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(app)/cases/[id]/page.js"
+    ],
+    "/(app)/approvals/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(app)/approvals/page.js"
     ]
   }
 }
