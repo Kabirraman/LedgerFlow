@@ -1,0 +1,6 @@
+node_modules/
+.next/
+.next-dev/
+.next-verify/
+.env
+.env.local

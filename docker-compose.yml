@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ledgerflow
+      POSTGRES_PASSWORD: ledgerflow
+      POSTGRES_DB: ledgerflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - ledgerflow-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ledgerflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_ENV: local
+      PORT: 8080
+      DATABASE_URL: postgres://ledgerflow:ledgerflow@postgres:5432/ledgerflow?sslmode=disable
+      CORS_ORIGINS: http://localhost:3000
+      # Demo-friendly defaults; override any of these with a real .env file
+      # or environment injection for a non-local deployment (see README).
+      SEED_ADMIN_EMAIL: admin@ledgerflow.test
+      SEED_ADMIN_PASSWORD: ledgerflow
+      RAZORPAY_MODE: test
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    environment:
+      LEDGERFLOW_API_URL: http://backend:8080
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+volumes:
+  ledgerflow-postgres:
