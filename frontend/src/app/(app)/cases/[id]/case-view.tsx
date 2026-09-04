@@ -185,18 +185,18 @@ export function CaseView({ caseId }: { caseId: string }) {
           label="Revenue at risk"
           value={formatMoneyKPI(c.revenue_at_risk)}
           tone="risk"
-          footnote="The trusted amount from the payment record — never a figure produced by a model."
+          footnote="Taken directly from the payment record."
         />
         <KPICard
           label="Risk score"
           value={c.risk_score.toFixed(2)}
-          footnote="Weighted from failure severity, customer intent, payment reliability, amount, time sensitivity and recovery window (SRS 9.1)."
+          footnote="Based on severity, customer intent, payment reliability, amount and timing."
         />
         <KPICard
           label="Expected recovery"
           value={formatMoneyKPI(c.expected_recovery)}
           tone="accent"
-          footnote="Revenue at risk × recovery probability × intervention feasibility (SRS 9.2)."
+          footnote="Estimated from the case value, likelihood of recovery and feasible action."
         />
         <KPICard
           label="Recovered"
@@ -222,8 +222,7 @@ export function CaseView({ caseId }: { caseId: string }) {
               <ApprovalActions caseId={caseId} onDecided={() => detail.reload()} />
             ) : (
               <p className="text-xs text-muted">
-                A reviewer or admin must decide this. Nothing has executed — the action is planned,
-                not pre-executed.
+                A reviewer or admin must decide this. The action is planned and has not run.
               </p>
             )}
           </div>
@@ -266,8 +265,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                   {humanize(d.diagnosis.root_cause)}
                   {d.diagnosis.root_cause === 'unknown' ? (
                     <p className="mt-1 text-2xs leading-relaxed text-dim">
-                      UNKNOWN is a permitted answer. The agent is instructed to choose it rather than
-                      invent a cause it cannot support (SRS 7.2).
+                      An unknown diagnosis is valid when there is not enough evidence to support a cause.
                     </p>
                   ) : null}
                 </Detail>
@@ -279,7 +277,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                   />
                 </Detail>
                 <Detail label="Next step" className="sm:col-span-2">
-                  {d.diagnosis.next_step || '—'}
+                  {d.diagnosis.next_step || 'Not available'}
                 </Detail>
                 <Detail label="Evidence" className="sm:col-span-2">
                   {(d.diagnosis.evidence ?? []).length > 0 ? (
@@ -307,7 +305,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                 ) : null}
                 <Detail label="Latency">{formatLatency(d.diagnosis.latency_ms)}</Detail>
                 <Detail label="Recorded">
-                  {mounted ? formatDateTime(d.diagnosis.created_at) : '—'}
+                  {mounted ? formatDateTime(d.diagnosis.created_at) : 'Loading'}
                 </Detail>
               </div>
             ) : (
@@ -373,11 +371,11 @@ export function CaseView({ caseId }: { caseId: string }) {
                   )}
                 </Detail>
                 <Detail label="Stop condition" className="sm:col-span-2">
-                  {d.decision.stop_condition || '—'}
+                  {d.decision.stop_condition || 'Not available'}
                 </Detail>
                 <Detail label="Latency">{formatLatency(d.decision.latency_ms)}</Detail>
                 <Detail label="Recorded">
-                  {mounted ? formatDateTime(d.decision.created_at) : '—'}
+                  {mounted ? formatDateTime(d.decision.created_at) : 'Loading'}
                 </Detail>
               </div>
             ) : (
@@ -389,7 +387,7 @@ export function CaseView({ caseId }: { caseId: string }) {
           <Card>
             <CardHeader
               title="Policy checks"
-              subtitle="Every rule evaluated, in the order the engine applied them. BLOCK beats ESCALATE beats PASS."
+              subtitle="Rules are shown in the order they were checked. A block always takes priority."
             />
             {(d.policy_checks ?? []).length > 0 ? (
               <TableShell
@@ -412,14 +410,14 @@ export function CaseView({ caseId }: { caseId: string }) {
                       <PolicyResultBadge result={check.result} />
                     </Td>
                     <Td>
-                      <span className="text-xs text-muted">{check.details || '—'}</span>
+                      <span className="text-xs text-muted">{check.details || 'No further details'}</span>
                     </Td>
                     <Td>
                       <Mono className="text-dim">{check.policy_version}</Mono>
                     </Td>
                     <Td className="whitespace-nowrap">
                       <Mono className="text-dim">
-                        {mounted ? formatDateTime(check.created_at) : '—'}
+                        {mounted ? formatDateTime(check.created_at) : 'Loading'}
                       </Mono>
                     </Td>
                   </tr>
@@ -467,7 +465,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                       {a.error_code || a.error_message ? (
                         <p className="mt-1 max-w-[16rem] break-words text-2xs text-block">
                           {a.error_code ? <span className="font-mono">{a.error_code}</span> : null}
-                          {a.error_code && a.error_message ? ' · ' : null}
+                          {a.error_code && a.error_message ? ': ' : null}
                           {a.error_message}
                         </p>
                       ) : null}
@@ -503,7 +501,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                     <Td>
                       <Mono
                         className="text-dim"
-                        title={`${a.idempotency_key} — a unique index on this column is what makes a duplicate request a no-op`}
+                        title={`${a.idempotency_key}. This key prevents duplicate requests from running twice.`}
                       >
                         {shortID(a.idempotency_key, 14, 8)}
                       </Mono>
@@ -516,7 +514,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                     </Td>
                     <Td className="whitespace-nowrap">
                       <Mono className="text-dim">
-                        {mounted ? formatDateTime(a.executed_at ?? a.requested_at) : '—'}
+                        {mounted ? formatDateTime(a.executed_at ?? a.requested_at) : 'Loading'}
                       </Mono>
                     </Td>
                   </tr>
@@ -525,7 +523,7 @@ export function CaseView({ caseId }: { caseId: string }) {
             ) : (
               <EmptyState
                 title="No actions."
-                detail="Either nothing has been approved yet, or the planner chose NO_ACTION — which is a decision, not a gap."
+                detail="An action will appear once a recommendation is approved. “No action” is also recorded here when it is the right call."
               />
             )}
           </Card>
@@ -566,7 +564,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                       </span>
                     </Td>
                     <Td>
-                      <Mono className="text-muted">{o.verification_source || '—'}</Mono>
+                      <Mono className="text-muted">{o.verification_source || 'Not available'}</Mono>
                     </Td>
                     <Td>
                       <Mono className="text-dim" title={o.action_id}>
@@ -574,7 +572,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                       </Mono>
                     </Td>
                     <Td>
-                      <span className="text-2xs text-muted">{o.notes || '—'}</span>
+                      <span className="text-2xs text-muted">{o.notes || 'No notes'}</span>
                     </Td>
                   </tr>
                 ))}
@@ -588,7 +586,7 @@ export function CaseView({ caseId }: { caseId: string }) {
             <Card>
               <CardHeader
                 title="Human decisions"
-                subtitle="Approval downgrades an ESCALATE to a pass. It never overrides a BLOCK."
+                subtitle="Approval clears an escalation. Blocks remain final."
               />
               <TableShell
                 head={
@@ -608,22 +606,22 @@ export function CaseView({ caseId }: { caseId: string }) {
                       <DecisionBadge decision={a.decision} />
                     </Td>
                     <Td>
-                      <span className="text-xs text-muted">{a.reason || '—'}</span>
+                      <span className="text-xs text-muted">{a.reason || 'No reason provided'}</span>
                     </Td>
                     <Td>
-                      <span className="text-xs text-muted">{a.reviewer || '—'}</span>
+                      <span className="text-xs text-muted">{a.reviewer || 'Not available'}</span>
                     </Td>
                     <Td>
-                      <span className="text-xs text-muted">{a.decision_note || '—'}</span>
+                      <span className="text-xs text-muted">{a.decision_note || 'No note provided'}</span>
                     </Td>
                     <Td className="whitespace-nowrap">
                       <Mono className="text-dim">
-                        {mounted ? formatDateTime(a.requested_at) : '—'}
+                        {mounted ? formatDateTime(a.requested_at) : 'Loading'}
                       </Mono>
                     </Td>
                     <Td className="whitespace-nowrap">
                       <Mono className="text-dim">
-                        {mounted && a.decided_at ? formatDateTime(a.decided_at) : '—'}
+                        {mounted && a.decided_at ? formatDateTime(a.decided_at) : 'Not decided'}
                       </Mono>
                     </Td>
                   </tr>
@@ -649,9 +647,9 @@ export function CaseView({ caseId }: { caseId: string }) {
               {d.customer ? (
                 <div className="space-y-2">
                   <p className="label">Customer</p>
-                  <Detail label="Name">{d.customer.name || '—'}</Detail>
+                  <Detail label="Name">{d.customer.name || 'Not available'}</Detail>
                   <Detail label="Email">
-                    <span className="break-all text-xs">{d.customer.email || '—'}</span>
+                    <span className="break-all text-xs">{d.customer.email || 'Not available'}</span>
                   </Detail>
                   <Detail label="Segment">
                     <SegmentBadge segment={d.customer.segment} />
@@ -683,7 +681,7 @@ export function CaseView({ caseId }: { caseId: string }) {
                       <span className="text-xs">{d.transaction.failure_reason}</span>
                     </Detail>
                   ) : null}
-                  <Detail label="Method">{d.transaction.method || '—'}</Detail>
+                  <Detail label="Method">{d.transaction.method || 'Not available'}</Detail>
                   <Detail label="Attempts">{d.transaction.attempt_count}</Detail>
                   {d.transaction.razorpay_payment_id ? (
                     <Detail label="Razorpay payment">
@@ -712,11 +710,11 @@ export function CaseView({ caseId }: { caseId: string }) {
                   <Detail label="Page views">{d.checkout_session.page_views}</Detail>
                   <Detail label="Status">{d.checkout_session.status}</Detail>
                   <Detail label="Last activity">
-                    {mounted ? formatDateTime(d.checkout_session.last_activity_at) : '—'}
+                    {mounted ? formatDateTime(d.checkout_session.last_activity_at) : 'Loading'}
                   </Detail>
                   <p className="text-2xs leading-relaxed text-dim">
                     Abandonment is generated by this project&apos;s demo checkout, not inferred from
-                    a Razorpay event that does not exist (SRS 11.2).
+                    a Razorpay event that is not available.
                   </p>
                 </div>
               ) : null}
@@ -758,7 +756,7 @@ export function CaseView({ caseId }: { caseId: string }) {
           <Card>
             <CardHeader
               title="State"
-              subtitle="Where the case is, and where it may legally go next (SRS 14.2)"
+              subtitle="The current stage of recovery and its allowed next steps."
             />
             <div className="space-y-3 p-4 sm:p-5">
               <Detail label="Current">
@@ -781,10 +779,10 @@ export function CaseView({ caseId }: { caseId: string }) {
               <Detail label="Case id">
                 <Mono title={c.id}>{c.id}</Mono>
               </Detail>
-              <Detail label="Created">{mounted ? formatDateTime(c.created_at) : '—'}</Detail>
-              <Detail label="Updated">{mounted ? formatDateTime(c.updated_at) : '—'}</Detail>
+              <Detail label="Created">{mounted ? formatDateTime(c.created_at) : 'Loading'}</Detail>
+              <Detail label="Updated">{mounted ? formatDateTime(c.updated_at) : 'Loading'}</Detail>
               {c.closed_at ? (
-                <Detail label="Closed">{mounted ? formatDateTime(c.closed_at) : '—'}</Detail>
+                <Detail label="Closed">{mounted ? formatDateTime(c.closed_at) : 'Loading'}</Detail>
               ) : null}
             </div>
           </Card>

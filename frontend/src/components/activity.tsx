@@ -65,7 +65,7 @@ export function ActivityFeed({ items }: { items: ActivityItem[] }) {
                   reader's clock says, and a hydration mismatch on a timestamp is
                   resolved silently. */}
               <p className="mt-0.5 text-2xs text-dim" title={formatDateTime(item.at)}>
-                {mounted ? formatRelative(item.at, now) : '—'}
+                {mounted ? formatRelative(item.at, now) : 'Loading'}
               </p>
             </div>
           </li>

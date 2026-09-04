@@ -10,6 +10,7 @@
  */
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import { ApiError } from '@/lib/api';
@@ -170,7 +171,7 @@ export function ErrorBanner({
     <div className={cn('rounded-card border px-4 py-3', tone, className)} role="alert">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">
+          <p className="text-xs font-medium opacity-80">
             {notConfigured
               ? 'not enabled in this deployment'
               : forbidden
@@ -281,6 +282,42 @@ export function KPICard({
       {footnote ? <p className="mt-1 text-2xs leading-relaxed text-dim">{footnote}</p> : null}
     </div>
   );
+}
+
+/** Animates a dashboard headline to its current value once data arrives. */
+export function CountUp({
+  value,
+  format,
+  className,
+  round = false,
+}: {
+  value: number;
+  format: (value: number) => string;
+  className?: string;
+  round?: boolean;
+}) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(value);
+      return;
+    }
+
+    const start = performance.now();
+    const duration = 520;
+    let frame = 0;
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(round ? Math.round(value * eased) : value * eased);
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [round, value]);
+
+  return <span className={cn('tnum', className)}>{format(display)}</span>;
 }
 
 /**

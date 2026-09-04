@@ -59,7 +59,7 @@ export function CaseTable({
 
           <Td>
             <p className="truncate text-xs text-body" title={c.customer_name}>
-              {c.customer_name || '—'}
+              {c.customer_name || 'Unknown customer'}
             </p>
             <div className="mt-1">
               <SegmentBadge segment={c.customer_segment} />
@@ -101,7 +101,7 @@ export function CaseTable({
             {c.recommended_action ? (
               <ActionTypeBadge action={c.recommended_action} />
             ) : (
-              <span className="text-2xs text-dim">—</span>
+              <span className="text-2xs text-dim">Not planned</span>
             )}
           </Td>
 
@@ -124,7 +124,7 @@ export function CaseTable({
               {c.recovered_amount > 0 ? (
                 <MoneyText paise={c.recovered_amount} className="text-xs text-recovered" />
               ) : (
-                <span className="text-2xs text-dim">—</span>
+                <span className="text-2xs text-dim">Not recovered</span>
               )}
             </Td>
           ) : null}

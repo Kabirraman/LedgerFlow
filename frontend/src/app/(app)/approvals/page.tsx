@@ -78,7 +78,7 @@ export default function ApprovalsPage() {
     <>
       <PageHeader
         title="Approval queue"
-        description="Decisions the policy engine escalated instead of executing. Highest value first, and least confident first at equal value — the two reasons a person is in the loop at all."
+        description="Review the decisions that need your judgment. The highest-impact requests appear first."
         right={
           <>
             <RefreshingDot active={queue.refreshing} />
@@ -107,27 +107,27 @@ export default function ApprovalsPage() {
               value={formatCount(totalPending)}
               tone={totalPending > 0 ? 'escalate' : 'neutral'}
               loading={queue.loading}
-              footnote="Counted in the database, not the length of this page."
+              footnote="Total requests waiting for a decision."
             />
             <KPICard
               label="Revenue at risk on this page"
               value={formatMoneyKPI(atRisk)}
               tone="risk"
               loading={queue.loading}
-              footnote="Trusted amounts from the payment records."
+              footnote="Value linked to the requests in this queue."
             />
             <KPICard
               label="Expected recovery on this page"
               value={formatMoneyKPI(expected)}
               tone="accent"
               loading={queue.loading}
-              footnote="What the planner expects if these are approved."
+              footnote="Estimated recovery if these requests are approved."
             />
             <KPICard
               label="Longest wait"
               value={formatMinutes(oldest)}
               loading={queue.loading}
-              footnote="Nothing executes while it waits. A stalled queue costs recovery, not safety."
+              footnote="Nothing runs while a request is waiting."
             />
           </div>
 
@@ -138,8 +138,8 @@ export default function ApprovalsPage() {
               title="Pending requests"
               subtitle={
                 hiding
-                  ? 'Requests whose action has already run are withheld: an approval granted after the fact is not a control.'
-                  : 'Showing already-executed requests too. These are for inspection only — approving one authorises nothing that has not already happened.'
+                  ? 'Executed requests are hidden because they no longer need approval.'
+                  : 'Executed requests are shown too. They are here for reference only.'
               }
               right={
                 <Button
@@ -158,7 +158,7 @@ export default function ApprovalsPage() {
                 title="Nothing waiting on a human."
                 detail={
                   hiding
-                    ? 'Either no case has been escalated, or every escalated case has been decided. Requests whose action already ran are hidden — use “Show executed” to confirm.'
+                    ? 'There are no decisions waiting right now. Turn on “Show executed” to review completed requests.'
                     : 'No pending approvals at all.'
                 }
               />
@@ -171,9 +171,8 @@ export default function ApprovalsPage() {
             )}
 
             <p className="border-t border-line px-4 py-3 text-2xs leading-relaxed text-dim sm:px-5">
-              {formatCount(items.length)} shown of {formatCount(totalPending)} pending. Approval
-              downgrades an escalation to a pass; it never overrides a BLOCK, and it never grants a
-              capability the action allow-list does not already contain.
+              Showing {formatCount(items.length)} of {formatCount(totalPending)} pending requests.
+              Approval clears an escalation. It cannot override a block or add a new action type.
             </p>
           </Card>
         </>

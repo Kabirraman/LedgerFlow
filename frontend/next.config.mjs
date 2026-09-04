@@ -54,6 +54,9 @@ const contentSecurityPolicy = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // A separate output directory is useful for local verification when a dev server
+  // has the default .next directory open. The normal build remains .next.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   output: 'standalone',
   reactStrictMode: true,
   // The version banner is served from the API's /api/version instead, which

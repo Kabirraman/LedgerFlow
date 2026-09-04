@@ -57,31 +57,31 @@ export default function AnalyticsPage() {
     <>
       <PageHeader
         title="Strategy performance"
-        description="What the Intervention Planner has actually tried, broken down by customer segment, scenario and action — the evidence a recommendation is grounded in rather than decorative (SRS 6.5, 18.2)."
+        description="See which recovery actions are working across customer groups and scenarios."
         right={<DataLabel label={strategies.data?.data_label} />}
       />
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <KPICard
           label="Total attempts"
-          value={totals ? formatCount(totals.attempts) : '—'}
+          value={totals ? formatCount(totals.attempts) : 'Not available'}
           loading={strategies.loading}
         />
         <KPICard
           label="Successful"
-          value={totals ? formatCount(totals.successes) : '—'}
+          value={totals ? formatCount(totals.successes) : 'Not available'}
           tone="recovered"
           loading={strategies.loading}
         />
         <KPICard
           label="Recovered amount"
-          value={totals ? formatMoneyKPI(totals.recovered_amount) : '—'}
+          value={totals ? formatMoneyKPI(totals.recovered_amount) : 'Not available'}
           tone="recovered"
           loading={strategies.loading}
         />
         <KPICard
           label="Overall success rate"
-          value={totals ? formatPercent(totals.success_rate) : '—'}
+          value={totals ? formatPercent(totals.success_rate) : 'Not available'}
           tone="accent"
           loading={strategies.loading}
           footnote={
@@ -97,7 +97,7 @@ export default function AnalyticsPage() {
       <Card>
         <CardHeader
           title="By segment, scenario and action"
-          subtitle="Sorted by recovered amount. A grey rate means the sample is too small to trust yet, not that the strategy failed."
+          subtitle="Sorted by recovered amount. Muted rates need more data before they become reliable."
         />
         <div className="grid grid-cols-1 gap-3 border-b border-line px-4 py-3 sm:grid-cols-3 sm:px-5">
           <Select
@@ -176,7 +176,7 @@ function StrategyRow({ row }: { row: StrategyMetric }) {
         className={row.sufficient ? 'text-body' : 'text-dim'}
         title={row.sufficient ? undefined : 'Sample too small to be a reliable signal yet.'}
       >
-        {row.success_rate === null ? '—' : formatPercent(row.success_rate)}
+        {row.success_rate === null ? 'Not available' : formatPercent(row.success_rate)}
         {!row.sufficient && row.success_rate !== null ? ' *' : ''}
       </Td>
       <Td align="right">{formatMoneyKPI(row.recovered_amount)}</Td>

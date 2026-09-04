@@ -35,7 +35,7 @@ const STAGES: Stage[] = [
   {
     key: 'diagnosed',
     label: 'Diagnosed',
-    hint: 'Cases with a root cause on record. A case diagnosed UNKNOWN still counts — the agent is allowed to not know.',
+    hint: 'Cases with a root cause on record. An unknown diagnosis still counts here.',
     fill: 'bg-accent/50',
     text: 'text-accent-text',
   },

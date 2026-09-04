@@ -111,7 +111,7 @@ const POLICY_TONE: Record<PolicyResult, Tone> = {
 
 const POLICY_HINT: Record<PolicyResult, string> = {
   PASS: 'This rule permitted the action.',
-  BLOCK: 'This rule refused the action. A block is final — approval cannot override it.',
+  BLOCK: 'This rule stopped the action. Approval cannot override a block.',
   ESCALATE: 'This rule required human approval before the action could proceed.',
 };
 
@@ -267,9 +267,8 @@ export function SegmentBadge({ segment, className }: { segment: Segment; classNa
 }
 
 const MODE_HINT: Record<RunMode, string> = {
-  live_test:
-    'Razorpay test mode. Real API calls against test credentials; no live money moves (SRS 5.2).',
-  simulation: 'Synthetic benchmark. No external API call is possible from this path (AC-009).',
+  live_test: 'Razorpay test mode. Requests use test credentials and never move live money.',
+  simulation: 'Synthetic benchmark. This run never makes an external API call.',
   review: 'Held for review. No action executes from this state.',
 };
 
@@ -307,10 +306,10 @@ export function DecidedByBadge({ source, model }: { source?: string; model?: str
       title={
         isModel
           ? `Produced by ${model || 'the model'} under a fixed JSON schema, then validated.`
-          : 'Produced by the deterministic fallback — the model was unavailable, timed out, or returned output that failed validation.'
+          : 'Created by the safe fallback because the model was unavailable, timed out, or returned invalid output.'
       }
     >
-      {isModel ? `Model${model ? ` · ${model}` : ''}` : 'Deterministic fallback'}
+      {isModel ? `Model${model ? `, ${model}` : ''}` : 'Deterministic fallback'}
     </Badge>
   );
 }

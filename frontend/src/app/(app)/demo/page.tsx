@@ -98,11 +98,11 @@ export default function DemoCheckoutPage() {
     <>
       <PageHeader
         title="Demo checkout"
-        description="A controlled cart used to generate a checkout-abandonment signal, since Razorpay does not emit one. Nothing here creates a payment — it only opens a case through the normal pipeline once you choose to abandon it."
+        description="Create a safe test cart and follow it through the same recovery flow your team uses. No payment is created here."
       />
 
       <Card>
-        <CardHeader title="Start a cart" subtitle="Creates or reuses a customer by email, then a checkout session." />
+        <CardHeader title="Start a cart" subtitle="Use an email to create or reuse a customer, then open a test checkout." />
         <form onSubmit={submit} className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
           <TextField
             label="Customer email"
@@ -206,17 +206,17 @@ export default function DemoCheckoutPage() {
         <Card>
           <CardHeader title="Abandonment recorded" />
           <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 sm:p-5">
-            <Detail label="Case created">{abandonResult.case_created ? 'Yes' : 'No — one already existed'}</Detail>
+            <Detail label="Case created">{abandonResult.case_created ? 'Yes' : 'No, one already existed'}</Detail>
             <Detail label="Case reference">
               {abandonResult.case_id ? (
                 <a href={`/cases/${abandonResult.case_id}`} className="font-mono text-xs hover:underline">
                   {abandonResult.case_reference}
                 </a>
               ) : (
-                '—'
+                'Not available'
               )}
             </Detail>
-            <Detail label="Reason">{abandonResult.reason || '—'}</Detail>
+            <Detail label="Reason">{abandonResult.reason || 'Not available'}</Detail>
           </div>
         </Card>
       ) : null}

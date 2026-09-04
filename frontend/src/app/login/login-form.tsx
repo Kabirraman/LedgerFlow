@@ -42,12 +42,12 @@ export function LoginForm({ next }: { next: string }) {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm space-y-5">
-        <div className="space-y-1.5 text-center">
+    <main className="login-shell flex min-h-screen items-center justify-center px-4 py-10">
+      <div className="page-enter w-full max-w-md space-y-7">
+        <div className="space-y-3 text-center">
           <span
             aria-hidden
-            className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-accent/30 bg-accent-soft"
+            className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-accent/30 bg-accent-soft shadow-[0_14px_32px_-16px_rgba(103,200,208,0.55)]"
           >
             <svg viewBox="0 0 20 20" className="h-5 w-5 text-accent-text" fill="none">
               <path
@@ -60,13 +60,16 @@ export function LoginForm({ next }: { next: string }) {
               <circle cx="17" cy="5.5" r="1.6" fill="currentColor" />
             </svg>
           </span>
-          <h1 className="text-lg font-semibold tracking-tight text-body">LEDGERFLOW</h1>
-          <p className="text-xs text-muted">
-            Autonomous revenue recovery. Sign in to the operator console.
+          <p className="text-sm font-semibold tracking-[-0.03em] text-body">Ledgerflow</p>
+          <h1 className="text-3xl font-semibold tracking-[-0.045em] text-body sm:text-4xl">
+            Bring lost revenue back into view.
+          </h1>
+          <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted">
+            LedgerFlow finds failed payments and overdue invoices, then helps your team recover them with care.
           </p>
         </div>
 
-        <form onSubmit={submit} className="card card-pad space-y-4">
+        <form onSubmit={submit} className="card card-pad space-y-5 border-line-strong/80 bg-ink-800/95 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.95)]">
           <TextField
             label="Email"
             type="email"
@@ -103,10 +106,7 @@ export function LoginForm({ next }: { next: string }) {
           </Button>
         </form>
 
-        <p className="text-center text-2xs leading-relaxed text-dim">
-          Razorpay test mode only. This deployment refuses to boot with a live key, and no live
-          monetary transaction is in scope (SRS 5.2).
-        </p>
+        <p className="text-center text-2xs leading-relaxed text-dim">Test environment. Live payments are disabled.</p>
       </div>
     </main>
   );

@@ -47,7 +47,7 @@ export function formatMoneyKPI(paise: Money): string {
 
 /** A 0..1 ratio as a percentage. One decimal: the samples are hundreds of cases, not millions. */
 export function formatPercent(ratio: number, digits = 1): string {
-  if (!Number.isFinite(ratio)) return '—';
+  if (!Number.isFinite(ratio)) return 'Not available';
   return `${(ratio * 100).toFixed(digits)}%`;
 }
 
@@ -58,7 +58,7 @@ export function formatPercent(ratio: number, digits = 1): string {
  * uplift has to be able to appear on screen rather than being formatted away.
  */
 export function formatSignedPercent(pct: number, digits = 1): string {
-  if (!Number.isFinite(pct)) return '—';
+  if (!Number.isFinite(pct)) return 'Not available';
   const s = pct.toFixed(digits);
   return `${pct > 0 ? '+' : ''}${s}%`;
 }
@@ -70,7 +70,7 @@ export function formatCount(n: number): string {
 
 /** A latency in milliseconds, scaled to whatever unit reads honestly. */
 export function formatLatency(ms: number): string {
-  if (!Number.isFinite(ms) || ms <= 0) return '—';
+  if (!Number.isFinite(ms) || ms <= 0) return 'Not available';
   if (ms < 1000) return `${Math.round(ms)} ms`;
   if (ms < 60_000) return `${(ms / 1000).toFixed(1)} s`;
   return `${(ms / 60_000).toFixed(1)} min`;
@@ -78,7 +78,7 @@ export function formatLatency(ms: number): string {
 
 /** Minutes, scaled. Used for time-to-recovery and approval wait times. */
 export function formatMinutes(minutes: number): string {
-  if (!Number.isFinite(minutes) || minutes <= 0) return '—';
+  if (!Number.isFinite(minutes) || minutes <= 0) return 'Not available';
   if (minutes < 60) return `${Math.round(minutes)} min`;
   const hours = minutes / 60;
   if (hours < 48) return `${hours.toFixed(1)} h`;
@@ -93,9 +93,9 @@ export function formatMinutes(minutes: number): string {
  * browser's on hydration — and React resolves that by silently keeping one of them.
  */
 export function formatDateTime(ts: string | undefined | null): string {
-  if (!ts) return '—';
+  if (!ts) return 'Not available';
   const d = new Date(ts);
-  if (Number.isNaN(d.getTime())) return '—';
+  if (Number.isNaN(d.getTime())) return 'Not available';
   return d.toLocaleString(undefined, {
     year: 'numeric',
     month: 'short',
@@ -108,9 +108,9 @@ export function formatDateTime(ts: string | undefined | null): string {
 
 /** Date only, for due dates and billing periods. */
 export function formatDate(ts: string | undefined | null): string {
-  if (!ts) return '—';
+  if (!ts) return 'Not available';
   const d = new Date(ts);
-  if (Number.isNaN(d.getTime())) return '—';
+  if (Number.isNaN(d.getTime())) return 'Not available';
   return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
 }
 
@@ -123,9 +123,9 @@ export function formatDate(ts: string | undefined | null): string {
  * a log.
  */
 export function formatRelative(ts: string | undefined | null, now = Date.now()): string {
-  if (!ts) return '—';
+  if (!ts) return 'Not available';
   const then = new Date(ts).getTime();
-  if (Number.isNaN(then)) return '—';
+  if (Number.isNaN(then)) return 'Not available';
   const deltaSec = Math.round((now - then) / 1000);
   const ago = deltaSec >= 0;
   const s = Math.abs(deltaSec);
@@ -153,15 +153,16 @@ export function formatRelative(ts: string | undefined | null, now = Date.now()):
  * "Some New Status" is worse-looking and more honest.
  */
 export function humanize(value: string | undefined | null): string {
-  if (!value) return '—';
+  if (!value) return 'Not available';
   const spaced = value.replace(/_/g, ' ').toLowerCase();
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
 /** Case statuses are already uppercase in the API; render them as-is but readable. */
 export function humanizeStatus(value: string | undefined | null): string {
-  if (!value) return '—';
-  return value.replace(/_/g, ' ');
+  if (!value) return 'Not available';
+  const spaced = value.replace(/_/g, ' ').toLowerCase();
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
 /**
@@ -171,7 +172,7 @@ export function humanizeStatus(value: string | undefined | null): string {
  * rarely in the middle. Cutting the middle keeps two rows visibly different.
  */
 export function shortID(id: string | undefined | null, head = 10, tail = 6): string {
-  if (!id) return '—';
+  if (!id) return 'Not available';
   if (id.length <= head + tail + 1) return id;
   return `${id.slice(0, head)}…${id.slice(-tail)}`;
 }

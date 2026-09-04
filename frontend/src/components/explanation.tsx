@@ -66,7 +66,7 @@ export function ExplanationPanel({ explanation }: { explanation: Explanation }) 
       {evidence.length > 0 ? (
         <Block
           title="Evidence used"
-          hint="The agent is instructed to use only supplied evidence and to cite it (SRS 8.4). These are the citations."
+          hint="These are the records used to support the recommendation."
         >
           <ul className="space-y-1">
             {evidence.map((e, i) => (
@@ -98,7 +98,7 @@ export function ExplanationPanel({ explanation }: { explanation: Explanation }) 
           title="Controls applied"
           hint={
             objections.length > 0
-              ? 'Objections are listed first. A BLOCK is final — human approval can downgrade an ESCALATE, never a BLOCK.'
+              ? 'Rules that need attention appear first. A block remains final, even after review.'
               : 'Every rule the policy engine evaluated for this decision.'
           }
         >
@@ -130,7 +130,7 @@ export function ExplanationPanel({ explanation }: { explanation: Explanation }) 
       {uncertainty.length > 0 ? (
         <Block
           title="Flagged uncertainty"
-          hint="Recorded by the diagnosis agent. An agent that is allowed to say UNKNOWN is more useful than one that always guesses (SRS 7.2)."
+          hint="These are the parts of the diagnosis that need more confidence."
         >
           <ul className="space-y-1">
             {uncertainty.map((u, i) => (
@@ -153,8 +153,7 @@ export function ExplanationPanel({ explanation }: { explanation: Explanation }) 
 
       <p className="border-t border-line pt-3 text-2xs leading-relaxed text-dim">
         This explanation is built from stored reason codes, policy checks and trusted amounts. It
-        contains no model reasoning trace: LEDGERFLOW records what was decided and which rules
-        applied, and does not surface a private chain of thought (AC-010).
+        records what was decided and which rules applied. It does not include private model reasoning.
       </p>
     </div>
   );

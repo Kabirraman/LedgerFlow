@@ -48,7 +48,7 @@ const FIELD_ORDER: Array<{
   {
     field: 'max_retry_count',
     label: 'Max retry count',
-    hint: 'Stop after this many retries on one case (SRS 10.3).',
+    hint: 'Stop after this many retries on one case.',
     kind: 'int',
   },
   {
@@ -66,7 +66,7 @@ const FIELD_ORDER: Array<{
   {
     field: 'max_actions_per_customer_per_day',
     label: 'Max actions per customer per day',
-    hint: 'Stop after this many actions against one customer in a day (SRS 10.3).',
+    hint: 'Stop after this many actions for one customer in a day.',
     kind: 'int',
   },
   {
@@ -78,7 +78,7 @@ const FIELD_ORDER: Array<{
   {
     field: 'min_action_confidence',
     label: 'Minimum action confidence',
-    hint: 'Below this, the planner\u2019s recommendation cannot execute autonomously (SRS 10.3).',
+    hint: 'Below this level, a recommendation needs human approval.',
     kind: 'ratio',
   },
   {
@@ -90,7 +90,7 @@ const FIELD_ORDER: Array<{
   {
     field: 'require_human_approval_above',
     label: 'Require approval above (\u20b9)',
-    hint: 'A second, independent approval threshold (SRS 10.1 default \u20b91,00,000).',
+    hint: 'A second approval threshold. The default is ₹1,00,000.',
     kind: 'money',
   },
 ];
@@ -178,7 +178,7 @@ export default function PoliciesPage() {
     <>
       <PageHeader
         title="Policies"
-        description="The deterministic guardrails every proposed action is checked against before it can execute (SRS 10). Saving activates a new version; it never edits the current one in place."
+        description="Set the guardrails that every recovery action must pass. Each save creates a new version, so your history stays intact."
         right={active ? <span className="chip border-line-strong bg-ink-700 text-muted">active {active.version}</span> : null}
       />
 
@@ -198,7 +198,7 @@ export default function PoliciesPage() {
               value={versionLabel}
               onChange={setVersionLabel}
               placeholder="e.g. v2 or tighter-cooldown"
-              hint={versionError ? undefined : 'Required. Every save creates a new version — this is its name in the history table below.'}
+              hint={versionError ? undefined : 'Required. Each save creates a new version with this name.'}
               error={versionError}
               className="sm:col-span-2 lg:col-span-4"
               required
@@ -226,7 +226,7 @@ export default function PoliciesPage() {
               <Button type="button" onClick={resetToActive}>
                 Reset to active
               </Button>
-              <Button type="button" onClick={resetToDefault} title="Loads the SRS 10.1 default values into the form. Does not save until you submit.">
+              <Button type="button" onClick={resetToDefault} title="Loads the standard values into the form. Changes are not saved until you activate them.">
                 Load defaults
               </Button>
             </div>
@@ -266,7 +266,7 @@ export default function PoliciesPage() {
                   <Mono>{p.version}</Mono>
                 </Td>
                 <Td>{formatDateTime(p.updated_at)}</Td>
-                <Td>{p.updated_by || '—'}</Td>
+                <Td>{p.updated_by || 'Not available'}</Td>
                 <Td align="right">{p.max_retry_count}</Td>
                 <Td align="right">{formatPercent(p.min_action_confidence)}</Td>
                 <Td align="right">

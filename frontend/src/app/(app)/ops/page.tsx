@@ -54,7 +54,7 @@ export default function OpsPage() {
     <>
       <PageHeader
         title="Operations"
-        description="Webhook intake, duplicate suppression, action latency and agent fallback — the operational metrics SRS 18.3 asks for, plus the raw event log they are computed from."
+        description="Keep an eye on system activity, delivery health, and the events behind each result."
         right={
           metrics.data ? (
             <span className="text-2xs text-dim">as of {formatDateTime(metrics.data.as_of)}</span>
@@ -65,7 +65,7 @@ export default function OpsPage() {
       <ErrorBanner error={metrics.error} onRetry={metrics.reload} />
 
       <Card>
-        <CardHeader title="Counters" subtitle="Every structured log counter this deployment has recorded (NFR-009)." />
+        <CardHeader title="Counters" subtitle="A quick view of the activity this environment has recorded." />
         {metrics.loading ? (
           <SkeletonRows rows={4} />
         ) : counters.length === 0 ? (
@@ -84,7 +84,7 @@ export default function OpsPage() {
       <Card>
         <CardHeader
           title="Event log"
-          subtitle="Raw and normalized webhook and backfill events, newest first (FR-004)."
+          subtitle="Webhook and backfill events, with the newest first."
           right={
             <Select
               label="Show"
@@ -133,10 +133,10 @@ export default function OpsPage() {
                     {ev.signature_valid ? 'valid' : 'invalid'}
                   </span>
                 </Td>
-                <Td>{ev.entity_id ? <Mono title={ev.entity_id}>{ev.entity_id}</Mono> : '—'}</Td>
+                <Td>{ev.entity_id ? <Mono title={ev.entity_id}>{ev.entity_id}</Mono> : 'Not available'}</Td>
                 <Td>{ev.processed_at ? formatDateTime(ev.processed_at) : 'pending'}</Td>
                 <Td className="max-w-xs truncate text-block" title={ev.rejection_reason}>
-                  {ev.rejection_reason || '—'}
+                  {ev.rejection_reason || 'None'}
                 </Td>
               </tr>
             ))}
@@ -157,7 +157,7 @@ function CounterStat({ label, value }: { label: string; value: CounterValue }) {
       <p className="label">{label}</p>
       <p className="tnum mt-1 text-lg font-semibold text-body">{formatCount(value.count)}</p>
       <p className="text-2xs text-dim">
-        sum {value.sum.toFixed(2)} · mean {value.mean.toFixed(2)}
+        Sum {value.sum.toFixed(2)}, average {value.mean.toFixed(2)}
       </p>
     </div>
   );
@@ -178,7 +178,7 @@ function SyncPanel() {
     <Card>
       <CardHeader
         title="Backfill payments"
-        subtitle="Synchronizes test-mode payment records for a chosen window (FR-005). Admin only."
+        subtitle="Sync test-mode payment records for a selected time window. Admin access required."
       />
       <form onSubmit={submit} className="flex flex-wrap items-end gap-3 p-4 sm:p-5">
         <TextField label="Window (hours)" type="number" min={1} value={hours} onChange={setHours} className="w-32" />

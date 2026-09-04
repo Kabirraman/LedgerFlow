@@ -73,7 +73,7 @@ export default function CasesPage() {
     <>
       <PageHeader
         title="Cases"
-        description="Every case the detection agent opened. Risk score, diagnosis confidence and the planned intervention are shown together, because a high-risk case with a low-confidence diagnosis is a different problem from a high-risk case with a clear one."
+        description="Review every recovery opportunity in one place. Prioritize the cases with the strongest potential and the clearest next step."
         right={
           <>
             <DataLabel label={cases.data?.data_label} />
@@ -87,7 +87,7 @@ export default function CasesPage() {
       <Card>
         <CardHeader
           title={page ? `${formatCount(page.total)} cases` : 'Cases'}
-          subtitle="Sorted by expected recovery unless changed"
+          subtitle="Sorted by expected recovery"
           right={
             <div className="flex items-end gap-2">
               {filtersActive(filters) ? (

@@ -98,8 +98,8 @@ export default function SimulationsPage() {
   return (
     <>
       <PageHeader
-        title="Simulation Lab"
-        description="A versioned synthetic benchmark, compared against a simple baseline. Nothing on this page can reach Razorpay — the runner behind it holds no gateway (AC-009)."
+        title="Simulations"
+        description="Test recovery strategy against a repeatable benchmark before putting it to work. This workspace never reaches Razorpay."
         right={!can('operator') ? null : <DataLabel label={runs.data?.data_label} />}
       />
 
@@ -115,11 +115,11 @@ export default function SimulationsPage() {
           <Card>
             <CardHeader
               title="Run a benchmark"
-              subtitle="Target benchmark size is 200 synthetic cases across five scenario mixes (SRS 17.1)."
+              subtitle="Compare recovery strategies across a repeatable set of synthetic cases."
             />
             <form onSubmit={submit} className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-5">
               <Select
-                label="LEDGERFLOW strategy"
+                label="Ledgerflow strategy"
                 value={strategy}
                 onChange={(v) => setStrategy((v || 'ledgerflow') as StrategyName)}
                 options={STRATEGY_OPTIONS}
@@ -143,7 +143,7 @@ export default function SimulationsPage() {
                 value={seed}
                 onChange={setSeed}
                 placeholder={defaults ? String(defaults.seed) : 'default'}
-                hint="Fixed seed makes the run reproducible (NFR-008)."
+                hint="Use a fixed seed to recreate the same run later."
               />
               <TextField
                 label="Case count"
@@ -167,7 +167,7 @@ export default function SimulationsPage() {
           <Card>
             <CardHeader
               title="Past runs"
-              subtitle="Newest first. Select one to see its full 17.4 report."
+              subtitle="Newest first. Open a run to see the full result."
             />
             {runs.loading ? (
               <SkeletonRows rows={4} />
@@ -211,7 +211,7 @@ export default function SimulationsPage() {
                           : 'text-recovered'
                       }
                     >
-                      {run.uplift_percent !== undefined ? formatSignedPercent(run.uplift_percent) : '—'}
+                      {run.uplift_percent !== undefined ? formatSignedPercent(run.uplift_percent) : 'Not available'}
                     </Td>
                     <Td align="right">{formatCount(run.result.escalated)}</Td>
                     <Td
@@ -242,8 +242,8 @@ function RunDetail({ response }: { response: SimulationResponse }) {
   return (
     <Card>
       <CardHeader
-        title={`Report · ${humanize(run.strategy)} vs ${humanize(run.baseline)}`}
-        subtitle={`Dataset ${response.reproduce.dataset_version} · seed ${response.reproduce.seed} · policy ${response.reproduce.policy_version}`}
+        title={`${humanize(run.strategy)} compared with ${humanize(run.baseline)}`}
+        subtitle={`Dataset ${response.reproduce.dataset_version}, seed ${response.reproduce.seed}, policy ${response.reproduce.policy_version}`}
         right={<DataLabel label={response.data_label} />}
       />
 
@@ -266,7 +266,7 @@ function RunDetail({ response }: { response: SimulationResponse }) {
 
       {agent_evaluation ? (
         <div className="border-t border-line p-4 sm:p-5">
-          <p className="label mb-3">Agent evaluation (SRS 22.3)</p>
+          <p className="label mb-3">Agent evaluation</p>
           <div className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4">
             <Metric
               label="Detection precision"
@@ -292,7 +292,7 @@ function RunDetail({ response }: { response: SimulationResponse }) {
             />
             <Metric
               label="Calibration error"
-              value={agent_evaluation.calibration_samples > 0 ? agent_evaluation.calibration_error.toFixed(3) : '—'}
+              value={agent_evaluation.calibration_samples > 0 ? agent_evaluation.calibration_error.toFixed(3) : 'Not available'}
               hint={`${formatCount(agent_evaluation.calibration_samples)} samples with a verified outcome.`}
             />
             <Metric label="Evidence coverage" value={formatPercent(agent_evaluation.evidence_coverage)} />
@@ -307,14 +307,13 @@ function RunDetail({ response }: { response: SimulationResponse }) {
               hint={
                 agent_evaluation.model_calls > 0
                   ? `${formatCount(agent_evaluation.model_calls)} model calls.`
-                  : 'No model calls were made — this run used the deterministic fallback only.'
+                  : 'No model calls were made. This run used the deterministic fallback.'
               }
             />
           </div>
           {agent_evaluation.unauthorized_actions > 0 ? (
             <p className="mt-3 text-xs text-block">
-              {formatCount(agent_evaluation.unauthorized_actions)} unauthorized action(s) — AC-002 / AC-003 target
-              is zero.
+              {formatCount(agent_evaluation.unauthorized_actions)} unauthorized action(s). This should stay at zero.
             </p>
           ) : null}
         </div>

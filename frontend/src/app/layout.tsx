@@ -5,7 +5,7 @@ import { AuthProvider } from '@/lib/auth';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'LEDGERFLOW — Revenue Recovery Console',
+  title: 'Ledgerflow | Revenue recovery',
   description:
     'Autonomous revenue recovery operating system. Detects at-risk revenue, diagnoses root cause, plans a compliant intervention, and verifies recovery.',
   // This console shows merchant financial state. Nothing about it belongs in a

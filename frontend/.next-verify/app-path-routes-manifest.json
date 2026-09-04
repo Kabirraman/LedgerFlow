@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/proxy/[...path]/route": "/api/proxy/[...path]",
+  "/api/session/route": "/api/session",
+  "/login/page": "/login",
+  "/page": "/",
+  "/(app)/approvals/page": "/approvals",
+  "/(app)/analytics/page": "/analytics",
+  "/(app)/demo/page": "/demo",
+  "/(app)/cases/[id]/page": "/cases/[id]",
+  "/(app)/dashboard/page": "/dashboard",
+  "/(app)/cases/page": "/cases",
+  "/(app)/ops/page": "/ops",
+  "/(app)/simulations/page": "/simulations",
+  "/(app)/policies/page": "/policies"
+}

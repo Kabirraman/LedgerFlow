@@ -26,6 +26,7 @@ import { FunnelChart } from '@/components/funnel';
 import {
   Card,
   CardHeader,
+  CountUp,
   CountText,
   DataLabel,
   EmptyState,
@@ -78,7 +79,7 @@ export default function DashboardPage() {
     <>
       <PageHeader
         title="Revenue recovery"
-        description="Detected, diagnosed, actioned and verified. Recovered amounts are banked only from a verified payment — an action that executed is not yet a recovery."
+        description="A clear view of what is at risk, what is in motion, and what has been recovered. Recovery is counted only after a payment is verified."
         right={
           <>
             <DataLabel label={summary.data?.data_label} />
@@ -93,21 +94,20 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <KPICard
           label="Revenue at risk"
-          value={s ? formatMoneyKPI(s.revenue_at_risk) : '—'}
+          value={s ? <CountUp value={s.revenue_at_risk} format={formatMoneyKPI} round /> : 'Not available'}
           tone="risk"
           loading={summary.loading}
           footnote={
             s ? (
               <>
-                {formatCount(s.open_cases)} open · {formatMoneyKPI(s.unresolved_revenue)} still
-                unresolved
+                {formatCount(s.open_cases)} open, {formatMoneyKPI(s.unresolved_revenue)} unresolved
               </>
             ) : null
           }
         />
         <KPICard
           label="Recovered"
-          value={s ? formatMoneyKPI(s.recovered_amount) : '—'}
+          value={s ? <CountUp value={s.recovered_amount} format={formatMoneyKPI} round /> : 'Not available'}
           tone="recovered"
           loading={summary.loading}
           footnote={
@@ -116,19 +116,19 @@ export default function DashboardPage() {
         />
         <KPICard
           label="Recovery rate"
-          value={s ? formatPercent(s.recovery_rate) : '—'}
+          value={s ? <CountUp value={s.recovery_rate} format={formatPercent} /> : 'Not available'}
           tone="accent"
           loading={summary.loading}
           footnote="Recovered amount as a share of revenue at risk."
         />
         <KPICard
           label="Automated actions"
-          value={s ? formatCount(s.automated_actions) : '—'}
+          value={s ? formatCount(s.automated_actions) : 'Not available'}
           loading={summary.loading}
           footnote={
             s ? (
               <>
-                {formatCount(s.escalated_cases)} escalated · {formatCount(s.blocked_actions)} blocked
+                {formatCount(s.escalated_cases)} escalated, {formatCount(s.blocked_actions)} blocked
                 by policy
               </>
             ) : null
@@ -141,29 +141,29 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <KPICard
           label="Expected recovery"
-          value={s ? formatMoneyKPI(s.expected_recovery) : '—'}
+          value={s ? formatMoneyKPI(s.expected_recovery) : 'Not available'}
           loading={summary.loading}
           footnote="Revenue at risk × recovery probability × intervention feasibility, summed over open cases."
         />
         <KPICard
           label="Avg time to recovery"
-          value={s ? formatMinutes(s.avg_recovery_minutes) : '—'}
+          value={s ? formatMinutes(s.avg_recovery_minutes) : 'Not available'}
           loading={summary.loading}
           footnote="From case creation to verified payment."
         />
         <KPICard
           label="Escalation rate"
-          value={s ? formatPercent(s.escalation_rate) : '—'}
+          value={s ? formatPercent(s.escalation_rate) : 'Not available'}
           tone="escalate"
           loading={summary.loading}
           footnote="Share of cases handed to a human rather than actioned autonomously."
         />
         <KPICard
           label="Policy violations"
-          value={s ? formatCount(s.policy_violations) : '—'}
+          value={s ? formatCount(s.policy_violations) : 'Not available'}
           tone={s && s.policy_violations > 0 ? 'risk' : 'recovered'}
           loading={summary.loading}
-          footnote="Actions that executed without passing policy. This must be zero (SRS 17.4)."
+          footnote="Actions that should be reviewed before they run. This should stay at zero."
         />
       </div>
 
@@ -171,7 +171,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader
             title="Recovery funnel"
-            subtitle="identified → diagnosed → actioned → recovered"
+            subtitle="From first signal to verified payment"
           />
           {summary.loading ? (
             <SkeletonRows rows={4} />
@@ -185,7 +185,7 @@ export default function DashboardPage() {
         <Card className="xl:col-span-2">
           <CardHeader
             title="Activity"
-            subtitle="Executed, recovered, blocked and escalated — newest first"
+            subtitle="Latest actions, recoveries and review decisions"
             right={<RefreshingDot active={summary.refreshing} />}
           />
           {summary.loading ? (
@@ -242,7 +242,7 @@ export default function DashboardPage() {
       <Card>
         <CardHeader
           title="At-risk cases"
-          subtitle={`Highest expected recovery first · top ${PREVIEW_LIMIT}`}
+          subtitle={`Highest expected recovery first. Showing ${PREVIEW_LIMIT}.`}
           right={
             <>
               <DataLabel label={cases.data?.data_label} />
@@ -276,7 +276,7 @@ export default function DashboardPage() {
       <Card>
         <CardHeader
           title="Operational health"
-          subtitle="Webhook intake, duplicate suppression and agent behaviour (SRS 18.3)"
+          subtitle="The signals that keep recovery work reliable"
           right={
             mounted && summary.data ? (
               <span className="text-2xs text-dim">as of {formatDateTime(summary.data.as_of)}</span>
@@ -296,7 +296,7 @@ export default function DashboardPage() {
             />
             <OpsStat
               label="Duplicate events"
-              value={`${formatCount(s.operational.duplicate_events)} · ${formatPercent(
+              value={`${formatCount(s.operational.duplicate_events)}, ${formatPercent(
                 s.operational.duplicate_event_rate,
               )}`}
               hint="Suppressed by a unique index on the external event id, not by application logic."
@@ -318,7 +318,7 @@ export default function DashboardPage() {
               label="Agent fallbacks"
               value={formatCount(s.operational.agent_fallback_count)}
               tone={s.operational.agent_fallback_count > 0 ? 'warn' : 'ok'}
-              hint="Times an agent timed out, returned invalid JSON or fell below the confidence floor, and the deterministic path took over (SRS 20.4)."
+              hint="How often the system switched to its safe fallback because an agent could not complete its work."
             />
             <OpsStat
               label="Blocked actions"

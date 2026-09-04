@@ -36,7 +36,7 @@ export function AuditLog({ caseId }: { caseId: string }) {
         <div className="min-w-0">
           <h2 className="text-sm font-semibold text-body">Audit log</h2>
           <p className="mt-0.5 text-xs text-muted">
-            Every recorded event for this case, with its case and action linkage (AC-005).
+            Every recorded event for this case, including its related actions.
           </p>
         </div>
         <Button onClick={() => setOpen((v) => !v)} pending={open && audit.loading}>
@@ -66,14 +66,14 @@ export function AuditLog({ caseId }: { caseId: string }) {
                 {rows.map((row) => (
                   <tr key={row.id} className="row-hover align-top">
                     <Td className="whitespace-nowrap">
-                      <Mono>{mounted ? formatDateTime(row.timestamp) : '—'}</Mono>
+                      <Mono>{mounted ? formatDateTime(row.timestamp) : 'Loading'}</Mono>
                     </Td>
                     <Td>
                       <p className="text-xs text-body">{humanize(row.event_type)}</p>
                       <Mono className="text-dim">{row.event_type}</Mono>
                     </Td>
                     <Td>
-                      <span className="text-xs text-muted">{row.actor || '—'}</span>
+                      <span className="text-xs text-muted">{row.actor || 'System'}</span>
                     </Td>
                     <Td>
                       <p className="text-xs text-muted">{row.entity_type}</p>
@@ -96,7 +96,7 @@ export function AuditLog({ caseId }: { caseId: string }) {
           ) : (
             <EmptyState
               title="No audit entries."
-              detail="Audit rows are written as the pipeline acts on a case. A case that has only just been detected may have very few."
+              detail="Audit entries appear as the case moves through recovery. Check back after the next action."
             />
           )}
         </>

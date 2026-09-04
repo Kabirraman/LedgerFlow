@@ -15,23 +15,23 @@ const config: Config = {
     extend: {
       colors: {
         ink: {
-          900: '#080b12',
-          800: '#0d1220',
-          700: '#141b2d',
-          600: '#1c2438',
-          500: '#273148',
+          900: '#10111a',
+          800: '#171925',
+          700: '#202331',
+          600: '#2b2f40',
+          500: '#393e52',
         },
         line: {
-          DEFAULT: '#242e44',
-          strong: '#33405c',
+          DEFAULT: '#303447',
+          strong: '#454a60',
         },
         body: '#e7ecf6',
         muted: '#93a0b8',
         dim: '#5f6c86',
         accent: {
-          DEFAULT: '#5b8cff',
-          soft: '#1e2a4d',
-          text: '#a8c1ff',
+          DEFAULT: '#67c8d0',
+          soft: '#17343a',
+          text: '#b9eef1',
         },
         pass: {
           DEFAULT: '#34d399',
@@ -52,12 +52,13 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
+          'IBM Plex Sans',
+          'Aptos',
+          'Aptos Display',
+          'Segoe UI Variable',
+          'Segoe UI',
           'ui-sans-serif',
           'system-ui',
-          '-apple-system',
-          'Segoe UI',
-          'Roboto',
-          'Helvetica Neue',
           'Arial',
           'sans-serif',
         ],
@@ -65,21 +66,18 @@ const config: Config = {
         // proportional font makes two amounts of the same magnitude different
         // widths, which is exactly when a reader misreads one for the other.
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
+        display: ['Georgia', 'Times New Roman', 'serif'],
       },
       fontSize: {
         '2xs': ['0.6875rem', { lineHeight: '1rem' }],
       },
       borderRadius: {
-        card: '0.75rem',
+        card: '0.625rem',
       },
       boxShadow: {
-        card: '0 1px 0 0 rgba(255,255,255,0.03) inset, 0 8px 24px -12px rgba(0,0,0,0.6)',
+        card: '0 1px 0 0 rgba(255,255,255,0.035) inset, 0 16px 32px -24px rgba(0,0,0,0.7)',
       },
       keyframes: {
-        'fade-in': {
-          from: { opacity: '0', transform: 'translateY(2px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
         shimmer: {
           '0%': { opacity: '0.45' },
           '50%': { opacity: '0.8' },
@@ -87,7 +85,6 @@ const config: Config = {
         },
       },
       animation: {
-        'fade-in': 'fade-in 160ms ease-out',
         shimmer: 'shimmer 1.4s ease-in-out infinite',
       },
     },

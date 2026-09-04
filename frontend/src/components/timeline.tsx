@@ -62,7 +62,7 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
               <p className="text-sm text-body">{item.title}</p>
               <p className="shrink-0 font-mono text-2xs text-dim">
-                {mounted ? formatDateTime(item.at) : '—'}
+                {mounted ? formatDateTime(item.at) : 'Loading'}
               </p>
             </div>
             {item.detail ? (

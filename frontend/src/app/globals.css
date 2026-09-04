@@ -20,12 +20,17 @@
   html,
   body {
     @apply bg-ink-900 text-body;
+    min-height: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     @apply text-sm;
+    background-image:
+      radial-gradient(circle at 88% -8%, rgba(103, 200, 208, 0.12), transparent 27rem),
+      linear-gradient(115deg, rgba(255, 255, 255, 0.018), transparent 38%);
+    background-attachment: fixed;
   }
 
   /* Amounts and identifiers are compared column-to-column, so their digits have to
@@ -92,6 +97,7 @@
 @layer components {
   .card {
     @apply rounded-card border border-line bg-ink-800 shadow-card;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
   }
 
   .card-pad {
@@ -99,17 +105,30 @@
   }
 
   .label {
-    @apply text-2xs font-medium uppercase tracking-[0.14em] text-dim;
+    @apply text-xs font-medium text-dim;
+    letter-spacing: 0;
+    text-transform: none;
   }
 
   .field {
     @apply w-full rounded-lg border border-line bg-ink-700 px-3 py-2 text-sm text-body
       placeholder:text-dim focus:border-accent/60;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
   }
 
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm
       font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease,
+      transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .btn:hover:enabled {
+    transform: translateY(-1px);
+  }
+
+  .btn:active:enabled {
+    transform: translateY(0) scale(0.98);
   }
 
   .btn-primary {
@@ -133,11 +152,12 @@
   }
 
   .table-head {
-    @apply border-b border-line text-left text-2xs font-medium uppercase tracking-[0.12em] text-dim;
+    @apply border-b border-line text-left text-2xs font-medium text-dim;
   }
 
   .row-hover {
     @apply transition-colors hover:bg-ink-700/60;
+    transition: background-color 150ms ease, box-shadow 150ms ease;
   }
 
   /* Loading placeholder. Shaped like the content it replaces, so the layout does not
@@ -145,5 +165,49 @@
    * several of these on screen at once should read as "not yet", not as motion. */
   .skeleton {
     @apply animate-shimmer rounded bg-ink-600;
+  }
+
+  .page-enter {
+    animation: page-enter 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .login-shell {
+    background-image:
+      radial-gradient(circle at 50% 34%, rgba(103, 200, 208, 0.15), transparent 25rem),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.02), transparent 48%);
+  }
+
+  .nav-link {
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .nav-link:hover {
+    transform: translateX(2px);
+  }
+
+  .nav-link[aria-current='page'] {
+    box-shadow: inset 2px 0 0 #67c8d0;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

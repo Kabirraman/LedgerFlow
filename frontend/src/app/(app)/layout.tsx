@@ -36,8 +36,6 @@ interface NavItem {
   minRole: Role;
   /** What the screen is for, one line. Shown as a tooltip. */
   hint: string;
-  /** The SRS section this screen satisfies, so a reviewer can trace it. */
-  srs: string;
 }
 
 const NAV: NavItem[] = [
@@ -46,56 +44,48 @@ const NAV: NavItem[] = [
     label: 'Dashboard',
     minRole: 'operator',
     hint: 'Revenue at risk, recovered, recovery rate and the recovery funnel.',
-    srs: '16.1',
   },
   {
     href: '/cases',
     label: 'Cases',
     minRole: 'operator',
     hint: 'Every at-risk case, filterable by scenario, segment, risk and action.',
-    srs: '16.2',
   },
   {
     href: '/approvals',
     label: 'Approvals',
     minRole: 'reviewer',
     hint: 'Cases awaiting human approval, highest value and lowest confidence first.',
-    srs: '16.3',
   },
   {
     href: '/simulations',
-    label: 'Simulation Lab',
+    label: 'Simulations',
     minRole: 'operator',
     hint: 'Run the versioned benchmark and compare LEDGERFLOW against a baseline.',
-    srs: '16.4',
   },
   {
     href: '/analytics',
     label: 'Strategy performance',
     minRole: 'operator',
     hint: 'Which action works for which segment, with sample sizes shown.',
-    srs: '10.4',
   },
   {
     href: '/demo',
     label: 'Demo checkout',
     minRole: 'operator',
     hint: 'Generate a checkout-abandonment event from a controlled demo checkout.',
-    srs: '11.2',
   },
   {
     href: '/ops',
     label: 'Operations',
     minRole: 'operator',
     hint: 'Webhook intake, duplicate suppression, agent fallbacks and latencies.',
-    srs: '18.3',
   },
   {
     href: '/policies',
     label: 'Policies',
     minRole: 'admin',
     hint: 'The guardrails every action is checked against, and their version history.',
-    srs: '15.2',
   },
 ];
 
@@ -112,7 +102,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     return (
       <div className="flex min-h-screen items-center justify-center gap-2 text-muted">
         <Spinner />
-        <span className="text-xs">Checking your session…</span>
+        <span className="text-xs">Checking your session...</span>
       </div>
     );
   }
@@ -120,18 +110,19 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const items = NAV.filter((item) => can(item.minRole));
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[15rem_1fr]">
-      <aside className="border-b border-line bg-ink-800 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:border-b-0 lg:border-r">
-        <div className="flex items-center gap-2 px-4 py-4">
+    <div className="min-h-screen lg:grid lg:grid-cols-[16rem_1fr]">
+      <aside className="border-b border-line/80 bg-ink-800/95 backdrop-blur-xl lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:border-b-0 lg:border-r">
+        <div className="flex items-center gap-2 px-4 py-5">
           <Mark />
           <div className="min-w-0">
-            <p className="text-sm font-semibold tracking-tight text-body">LEDGERFLOW</p>
-            <p className="text-2xs text-dim">Revenue recovery OS</p>
+            <p className="text-sm font-semibold tracking-[-0.03em] text-body">Ledgerflow</p>
+            <p className="text-2xs text-dim">Revenue recovery</p>
           </div>
         </div>
 
-        <nav className="px-2 pb-3" aria-label="Console">
-          <ul className="space-y-0.5">
+        <nav className="overflow-x-auto px-2 pb-3 lg:overflow-visible" aria-label="Console navigation">
+          <p className="label px-3 pb-2 pt-1">Workspace</p>
+          <ul className="flex min-w-max gap-1 lg:block lg:min-w-0 lg:space-y-1">
             {items.map((item) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
@@ -141,14 +132,36 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     title={item.hint}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
+                      'nav-link flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm',
                       active
                         ? 'bg-accent-soft text-accent-text'
                         : 'text-muted hover:bg-ink-700 hover:text-body',
                     )}
                   >
                     <span className="truncate">{item.label}</span>
-                    <span className="shrink-0 font-mono text-2xs text-dim">{item.srs}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          {items.length > 2 ? <p className="label px-3 pb-2 pt-5">Operate</p> : null}
+          <ul className="flex min-w-max gap-1 lg:block lg:min-w-0 lg:space-y-1">
+            {items.slice(2).map((item) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    title={item.hint}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'nav-link flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm',
+                      active
+                        ? 'bg-accent-soft text-accent-text'
+                        : 'text-muted hover:bg-ink-700 hover:text-body',
+                    )}
+                  >
+                    <span className="truncate">{item.label}</span>
                   </Link>
                 </li>
               );
@@ -156,7 +169,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </ul>
         </nav>
 
-        <div className="border-t border-line px-4 py-3">
+        <div className="border-t border-line px-4 py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <p className="truncate text-xs font-medium text-body">{user.name || user.email}</p>
@@ -172,8 +185,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <DeploymentPanel />
       </aside>
 
-      <main className="min-w-0 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-[92rem] space-y-6">{children}</div>
+      <main className="min-w-0 px-4 py-7 sm:px-6 lg:px-9 lg:py-8">
+        <div className="page-enter mx-auto max-w-[92rem] space-y-6">{children}</div>
       </main>
     </div>
   );
@@ -215,7 +228,7 @@ function DeploymentPanel() {
   if (error) {
     return (
       <div className="border-t border-line px-4 py-3">
-        <p className="text-2xs text-block">Deployment details unavailable.</p>
+        <p className="text-2xs text-block">Deployment details are unavailable.</p>
       </div>
     );
   }
@@ -233,19 +246,19 @@ function DeploymentPanel() {
             label="Razorpay"
             value={
               data.razorpay_configured
-                ? `${data.razorpay_mode} mode${data.gateway_external ? '' : ' · no external calls'}`
+                ? `${data.razorpay_mode} mode${data.gateway_external ? '' : ', no external calls'}`
                 : 'not configured'
             }
             tone={data.razorpay_configured ? 'ok' : 'warn'}
           />
           <Row
             label="Model"
-            value={data.model_configured ? data.model : 'not configured — deterministic only'}
+            value={data.model_configured ? data.model : 'not configured, using safe defaults'}
             tone={data.model_configured ? 'ok' : 'warn'}
           />
           <Row
             label="Auto-execute"
-            value={data.auto_execute ? 'on' : 'off — approved actions wait'}
+            value={data.auto_execute ? 'on' : 'off, approved actions wait'}
           />
           <Row
             label="Live mode"
@@ -255,8 +268,7 @@ function DeploymentPanel() {
         </dl>
       )}
       <p className="pt-1 text-2xs leading-relaxed text-dim">
-        Live-mode monetary transactions are out of scope. This build refuses to boot with a live
-        Razorpay key (SRS 5.2).
+        Test mode is active. Live payments are disabled in this build.
       </p>
     </div>
   );
