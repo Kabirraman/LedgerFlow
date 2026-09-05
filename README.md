@@ -53,8 +53,8 @@ No `.env` file is required for local development — every setting has a safe de
 | `DATABASE_URL` | `postgres://ledgerflow:ledgerflow@localhost:5432/ledgerflow?sslmode=disable` | |
 | `PORT` | `8080` | |
 | `JWT_SECRET` | dev-only fixed string | **required** and must be ≥32 chars once `APP_ENV != local` |
-| `SEED_ADMIN_EMAIL` | `admin@ledgerflow.test` | |
-| `SEED_ADMIN_PASSWORD` | `ledgerflow` | **required** once `APP_ENV != local` |
+| `SEED_ADMIN_EMAIL` | `admintest@gmail.com` | |
+| `SEED_ADMIN_PASSWORD` | `admintest123` | **required** once `APP_ENV != local` |
 | `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` | unset | leave unset to run against the built-in sandbox gateway instead of real Razorpay test mode |
 | `RAZORPAY_WEBHOOK_SECRET` | unset | required to accept real Razorpay webhooks |
 | `RAZORPAY_MODE` | `test` | the server refuses to boot with anything else, and refuses `rzp_live` key ids outright |
