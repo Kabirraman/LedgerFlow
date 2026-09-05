@@ -1,18 +1,5 @@
 # How to apply
 
-Two new files and one updated file, all at the repo root:
-
-- ARCHITECTURE.md   (new)
-- POSTMORTEM.md     (new)
-- README.md         (updated — added two lines pointing to the files above,
-                      right after the intro. If you've made other README edits
-                      since the last round, just add those two lines yourself
-                      instead of overwriting the whole file — look for the
-                      "See also:" line.)
-
-Both new Mermaid diagrams in ARCHITECTURE.md were validated for correct
-syntax (parsed clean with mermaid.js). GitHub renders ```mermaid fenced code
-blocks natively in .md files — no image export or extra tooling needed.
 
 ## Apply
 
