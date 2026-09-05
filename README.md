@@ -6,6 +6,8 @@ LedgerFlow is an autonomous revenue recovery platform designed to identify reven
 
 > The sections below (numbered 15–29) are excerpted from the full Software Requirements Specification (`Ledgerflow_SRS.docx`), which also covers architecture, data model, and API contracts (sections 1–14).
 
+**See also:** [`ARCHITECTURE.md`](./ARCHITECTURE.md) for a diagram of the recovery pipeline and the safety boundaries it enforces, and [`POSTMORTEM.md`](./POSTMORTEM.md) for what broke during development and how it was fixed.
+
 ---
 
 ## Getting Started
