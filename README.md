@@ -70,8 +70,8 @@ npm run dev
 
 Visit http://localhost:3000 and log in with the seeded admin account:
 
-* **Email:** `admin@ledgerflow.test`
-* **Password:** `ledgerflow`
+* **Email:** `admintest@gmail.com`
+* **Password:** `admintest123`
 
 > These are local-development-only defaults enforced by the backend — see `internal/config/config.go`. They are rejected outright the moment `APP_ENV` is anything other than `local`.
 
