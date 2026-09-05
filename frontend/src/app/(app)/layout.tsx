@@ -123,7 +123,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <nav className="overflow-x-auto px-2 pb-3 lg:overflow-visible" aria-label="Console navigation">
           <p className="label px-3 pb-2 pt-1">Workspace</p>
           <ul className="flex min-w-max gap-1 lg:block lg:min-w-0 lg:space-y-1">
-            {items.map((item) => {
+            {items.slice(0, 2).map((item) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <li key={item.href}>

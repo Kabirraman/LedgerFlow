@@ -28,10 +28,10 @@ func (s *Store) DashboardSummary(ctx context.Context) (*domain.DashboardSummary,
 	err := s.pool.QueryRow(ctx, `
 		SELECT
 			COALESCE(sum(rc.revenue_at_risk), 0),
-			COALESCE(sum(rc.expected_recovery), 0),
+			COALESCE(sum(rc.expected_recovery) FILTER (WHERE NOT (rc.status IN ('RECOVERED','CLOSED','BLOCKED','REJECTED'))), 0),
 			COALESCE(sum(rc.recovered_amount), 0),
 			count(*) FILTER (WHERE NOT (rc.status IN ('RECOVERED','CLOSED','BLOCKED','REJECTED'))),
-			COALESCE(sum(rc.revenue_at_risk) FILTER (WHERE rc.status <> 'RECOVERED'), 0),
+			COALESCE(sum(rc.revenue_at_risk) FILTER (WHERE NOT (rc.status IN ('RECOVERED','CLOSED','BLOCKED','REJECTED'))), 0),
 			count(*) FILTER (WHERE rc.status IN ('ESCALATED','WAITING_HUMAN')),
 			count(*) FILTER (WHERE rc.status = 'BLOCKED'),
 			count(*),

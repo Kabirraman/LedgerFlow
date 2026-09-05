@@ -241,11 +241,11 @@ func run() error {
 	srv := &http.Server{
 		Addr:    ":" + cfg.Port,
 		Handler: api.Handler(),
-		// Generous but finite. A request that has not finished in a minute is
-		// wedged, and holding the connection open only hides that.
+		// Generous but finite. Model-backed simulation runs can take several minutes,
+		// and the frontend proxy permits up to five minutes for them to finish.
 		ReadHeaderTimeout: 10 * time.Second,
 		ReadTimeout:       30 * time.Second,
-		WriteTimeout:      60 * time.Second,
+		WriteTimeout:      300 * time.Second,
 		IdleTimeout:       120 * time.Second,
 	}
 

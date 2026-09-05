@@ -75,6 +75,7 @@ export default function SimulationsPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSelected(undefined);
     const body: Parameters<typeof api.runSimulation>[0] = { strategy, baseline, evaluate: true };
     if (version.trim()) body.version = version.trim();
     const seedNum = Number.parseInt(seed, 10);

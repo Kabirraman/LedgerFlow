@@ -49,7 +49,9 @@ func (s *Store) SaveDataset(ctx context.Context, d *domain.BenchmarkDataset) err
 	if getErr != nil {
 		return execErr
 	}
+	casesForRun := d.Cases
 	*d = *existing
+	d.Cases = casesForRun
 	return nil
 }
 
