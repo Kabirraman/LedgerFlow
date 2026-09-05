@@ -48,10 +48,10 @@ flowchart LR
 - **The executor is the only component holding a Razorpay client.** The
   detection/diagnosis/planner agents, the orchestrator, and the simulation
   runner never receive one. A simulated run can't accidentally call the real
-  gateway — there's no object in its call graph capable of it, so this holds
+  gateway,  there's no object in its call graph capable of it, so this holds
   by construction rather than by a runtime flag anyone could flip.
 - **The verifier is the sole settler.** A webhook can create or update a case,
-  but only the verifier attributes a confirmed payment as recovered revenue —
+  but only the verifier attributes a confirmed payment as recovered revenue -
   so no single inbound event can directly write a revenue total.
 - **The policy engine gates every action before execution**, not after.
   `PASS` proceeds to the executor automatically (when `AUTO_EXECUTE_APPROVED`
@@ -59,7 +59,7 @@ flowchart LR
   `BLOCK` goes straight to the audit log with no execution attempt.
 - **Every agent has a deterministic fallback.** If `GEMINI_API_KEY` is unset,
   detection/diagnosis/planning fall back to rule-based logic instead of
-  failing — the system runs the same pipeline either way, and which path
+  failing - the system runs the same pipeline either way, and which path
   produced a given decision is logged and shown in the UI.
 - **One process, not a microservice fleet.** The components above are already
   separate Go packages with narrow interfaces between them (`agents`,
